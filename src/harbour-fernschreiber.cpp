@@ -53,6 +53,17 @@
 
 Q_IMPORT_PLUGIN(TgsIOPlugin)
 
+static TDLibWrapper *tdLibWrapper;
+
+class Globals : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(TDLibWrapper* tdLibWrapper READ getTdLibWrapper CONSTANT)
+public:
+    static QObject* createSingleton(QQmlEngine*, QJSEngine*) { return new Globals(); }
+    TDLibWrapper* getTdLibWrapper() { return tdLibWrapper; }
+};
+
 int main(int argc, char *argv[])
 {
     QLoggingCategory::setFilterRules(DEFAULT_LOG_FILTER);
@@ -65,13 +76,15 @@ int main(int argc, char *argv[])
     const char *uri = "WerkWolf.Fernschreiber";
     qmlRegisterType<TDLibFile>(uri, 1, 0, "TDLibFile");
     qmlRegisterSingletonType<DebugLogJS>(uri, 1, 0, "DebugLog", DebugLogJS::createSingleton);
+    qmlRegisterSingletonType<Globals>(uri, 1, 0, "Globals", Globals::createSingleton);
 
-    AppSettings *appSettings = new AppSettings(view.data());
+    tdLibWrapper = new TDLibWrapper(view.data()); // Global variable
+    AppSettings *appSettings = tdLibWrapper->getAppSettings();
+    MceInterface *mceInterface = tdLibWrapper->getMceInterface();
+
     context->setContextProperty("appSettings", appSettings);
     qmlRegisterUncreatableType<AppSettings>(uri, 1, 0, "AppSettings", QString());
 
-    MceInterface *mceInterface = new MceInterface(view.data());
-    TDLibWrapper *tdLibWrapper = new TDLibWrapper(appSettings, mceInterface, view.data());
     context->setContextProperty("tdLibWrapper", tdLibWrapper);
     qmlRegisterUncreatableType<TDLibWrapper>(uri, 1, 0, "TelegramAPI", QString());
 
@@ -100,3 +113,5 @@ int main(int argc, char *argv[])
     view->show();
     return app->exec();
 }
+
+#include "harbour-fernschreiber.moc"

@@ -20,6 +20,9 @@
 .pragma library
 .import "debug.js" as Debug
 .import Sailfish.Silica 1.0 as Silica
+.import WerkWolf.Fernschreiber 1.0 as Fernschreiber
+
+var tdLibWrapper = Fernschreiber.Globals.tdLibWrapper
 
 function getUserName(userInformation) {
     var firstName = typeof userInformation.first_name !== "undefined" ? userInformation.first_name : "";

@@ -41,11 +41,11 @@ namespace {
     const QString _EXTRA("@extra");
 }
 
-TDLibWrapper::TDLibWrapper(AppSettings *appSettings, MceInterface *mceInterface, QObject *parent) : QObject(parent), joinChatRequested(false)
+TDLibWrapper::TDLibWrapper(QObject *parent) : QObject(parent), joinChatRequested(false)
 {
     LOG("Initializing TD Lib...");
-    this->appSettings = appSettings;
-    this->mceInterface = mceInterface;
+    this->appSettings = new AppSettings(this);
+    this->mceInterface = new MceInterface(this);
     this->tdLibClient = td_json_client_create();
     this->tdLibReceiver = new TDLibReceiver(this->tdLibClient, this);
 
@@ -913,6 +913,16 @@ void TDLibWrapper::registerJoinChat()
 DBusAdaptor *TDLibWrapper::getDBusAdaptor()
 {
     return this->dbusInterface->getDBusAdaptor();
+}
+
+AppSettings *TDLibWrapper::getAppSettings()
+{
+    return appSettings;
+}
+
+MceInterface *TDLibWrapper::getMceInterface()
+{
+    return mceInterface;
 }
 
 void TDLibWrapper::handleVersionDetected(const QString &version)

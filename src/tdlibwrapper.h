@@ -32,7 +32,7 @@ class TDLibWrapper : public QObject
 {
     Q_OBJECT
 public:
-    explicit TDLibWrapper(AppSettings *appSettings, MceInterface *mceInterface, QObject *parent = nullptr);
+    explicit TDLibWrapper(QObject *parent = nullptr);
     ~TDLibWrapper();
 
     enum AuthorizationState {
@@ -108,6 +108,8 @@ public:
     Q_INVOKABLE void registerJoinChat();
 
     DBusAdaptor *getDBusAdaptor();
+    AppSettings *getAppSettings();
+    MceInterface *getMceInterface();
 
     // Direct TDLib functions
     Q_INVOKABLE void sendRequest(const QVariantMap &requestObject);
